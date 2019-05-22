@@ -78,6 +78,6 @@
     "react-test-renderer": "16.2.0",
     "relay-compiler": "1.5.0",
     "remark-preset-lint-recommended": "3.0.1",
-    "webpack-dev-server": "2.9.7"
+    "webpack-dev-server": "3.1.11"
   }
 }
