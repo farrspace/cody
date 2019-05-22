@@ -41,7 +41,7 @@
     "prop-types": "15.6.0",
     "rails-erb-loader": "5.2.1",
     "react": "16.2.0",
-    "react-dom": "16.2.0",
+    "react-dom": "16.2.1",
     "react-helmet": "5.2.0",
     "react-loadable": "5.5.0",
     "react-octicons": "0.1.0",
