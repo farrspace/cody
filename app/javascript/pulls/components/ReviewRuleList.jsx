@@ -50,7 +50,7 @@ export default createFragmentContainer(
     fragment ReviewRuleList_repository on Repository {
       owner
       name
-      reviewRules(first: 10, after: $cursor)
+      reviewRules(first: 200, after: $cursor)
         @connection(key: "ReviewRuleList_reviewRules") {
         edges {
           node {
