@@ -191,6 +191,8 @@ RSpec.describe ReceiveIssueCommentEvent do
       stub_request(:patch, %r{https?://api.github.com/repos/[A-Za-z0-9_-]+/[A-Za-z0-9_-]+/pulls/\d+})
       stub_request(:patch, %r{https?://api.github.com/repos/[A-Za-z0-9_-]+/[A-Za-z0-9_-]+/issues/\d+})
 
+      allow_any_instance_of(PullRequest).to receive(:commit_authors).and_return(["maverick"])
+
       FactoryBot.create :reviewer, review_rule: rule, pull_request: pr, login: "aergonaut"
     end
 
@@ -205,6 +207,26 @@ RSpec.describe ReceiveIssueCommentEvent do
 
     context "when there is no other possible reviewer for the rule" do
       let(:acceptable_reviewer) { "aergonaut" }
+
+      it "does not replace aergonaut" do
+        foo_reviewer = pr.reviewers.find_by(review_rule_id: rule.id)
+        expect { job.perform(payload) }.to_not change { foo_reviewer.reload.login }
+      end
+    end
+
+    context "when other users are paused" do
+      let(:acceptable_reviewer) { "1234" }
+      let(:expected_team_members) { %w(iceman goose) }
+
+      before do
+        allow(User).to receive(:paused_logins).and_return(%w[iceman goose])
+
+        stub_request(:get, %r{https?://api.github.com/teams/1234/members}).to_return(
+          status: 200,
+          headers: { 'Content-Type' => 'application/json' },
+          body: JSON.dump(json_fixture("team_members", members: expected_team_members))
+        )
+      end
 
       it "does not replace aergonaut" do
         foo_reviewer = pr.reviewers.find_by(review_rule_id: rule.id)
